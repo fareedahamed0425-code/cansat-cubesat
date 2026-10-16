@@ -372,7 +372,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  overflow: hidden;
+  overflow-y: auto;
+  overflow-x: hidden;
+  min-height: 0;
+  padding-right: 2px;
+  scroll-behavior: smooth;
 }
 
 /* ==========================================================================
@@ -714,7 +718,10 @@ body {
 
 /* Real-Time Telemetry Graph Grid */
 .graphs-panel {
-  flex-grow: 1;
+  flex-shrink: 0;
+  height: auto;
+  display: flex;
+  flex-direction: column;
 }
 
 .graph-legend {
@@ -741,9 +748,9 @@ body {
 .charts-grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 1fr 1fr;
+  grid-template-rows: 200px 200px;
   gap: 8px;
-  padding: 6px;
+  padding: 8px;
   background-color: #07090c;
 }
 .chart-wrapper {
@@ -754,7 +761,8 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  min-height: 0; /* Important for flex/grid sizing */
+  height: 200px;
+  min-height: 200px;
 }
 .chart-header-overlay {
   font-size: 11px;
@@ -766,8 +774,9 @@ body {
 }
 .chart-wrapper canvas {
   flex-grow: 1;
-  max-height: calc(100% - 12px);
   width: 100% !important;
+  height: 160px !important;
+  max-height: calc(100% - 16px);
 }
 
 /* ==========================================================================
