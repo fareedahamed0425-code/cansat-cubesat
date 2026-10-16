@@ -1,0 +1,512 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CanSat Ground Control System - Flight Operations Command</title>
+  
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&family=Orbitron:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- CSS Library Stylesheet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="css/style.css">
+  
+  <!-- External Scripts -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+
+  <!-- Top Mission Control Bar -->
+  <header class="mission-header">
+    <div class="header-left">
+      <div class="mission-logo">
+        <i data-lucide="satellite" class="text-cyan animate-pulse"></i>
+        <div class="logo-text">
+          <span class="logo-sub">ISRO-SHAR CANSAT SIMULATION</span>
+          <span class="logo-main">GCS DASHBOARD V4.1</span>
+        </div>
+      </div>
+      <div class="mission-status-pill connection-status active" id="comm-health-indicator">
+        <span class="status-dot green"></span>
+        <span class="status-text">COMM LINK STABLE (100%)</span>
+      </div>
+    </div>
+
+    <!-- Live Timer & Counters -->
+    <div class="header-center">
+      <div class="meta-counter border-right">
+        <span class="counter-label">MISSION MET</span>
+        <span class="counter-val font-mono" id="mission-time">00:00:00.0</span>
+      </div>
+      <div class="meta-counter border-right">
+        <span class="counter-label">PACKET TELEM</span>
+        <span class="counter-val font-mono" id="packet-count">000000</span>
+      </div>
+      <div class="meta-counter">
+        <span class="counter-label">FLIGHT PHASE</span>
+        <span class="counter-val text-cyan" id="current-phase">LAUNCH-CHECK</span>
+      </div>
+    </div>
+
+    <!-- Global Operations Buttons -->
+    <div class="header-right">
+      <div class="btn-group">
+        <button id="btn-start" class="btn btn-success" title="Begin Telemetry Uplink">
+          <i data-lucide="play"></i> <span>START TELEMETRY</span>
+        </button>
+        <button id="btn-stop" class="btn btn-danger disabled" title="Sever Telemetry Uplink" disabled>
+          <i data-lucide="square"></i> <span>STOP</span>
+        </button>
+        <button id="btn-sync" class="btn btn-secondary" title="Sync On-board Chronometer">
+          <i data-lucide="refresh-cw"></i> <span>SYNC TIME</span>
+        </button>
+        <button id="btn-reset" class="btn btn-secondary" title="Flush Packets Buffer">
+          <i data-lucide="trash-2"></i> <span>RESET</span>
+        </button>
+        <button id="btn-fullscreen" class="btn btn-secondary" title="Toggle Fullscreen Operations Console">
+          <i data-lucide="maximize"></i> <span>FULLSCREEN</span>
+        </button>
+      </div>
+      <div class="export-dropdown">
+        <button id="btn-export-trigger" class="btn btn-accent">
+          <i data-lucide="download"></i> <span>EXPORT DATA</span>
+        </button>
+        <div class="dropdown-content">
+          <a href="#" id="export-csv"><i data-lucide="file-spreadsheet"></i> Telemetry Log (.CSV)</a>
+          <a href="#" id="export-graphs"><i data-lucide="image"></i> Graph Canvas Capture</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Master UI Grid Layout -->
+  <main class="gcs-grid-container">
+
+    <!-- Column 1: Live Sensor Telemetry (Left) -->
+    <aside class="panel telemetry-panel">
+      <div class="panel-header">
+        <div class="panel-header-title">
+          <i data-lucide="database"></i>
+          <span>PRIMARY INSTRUMENTATION SUITE</span>
+        </div>
+        <span class="telemetry-speed text-muted">5Hz</span>
+      </div>
+      
+      <div class="panel-content scrollable-panel">
+        
+        <!-- Section: Container Telemetry -->
+        <div class="telemetry-section-group">
+          <div class="section-title">
+            <span>CONTAINER SENSORS (AEROSHELL)</span>
+            <div class="status-pulse-pill" id="container-status"><span class="pulse-dot"></span><span>UPLINK</span></div>
+          </div>
+          
+          <div class="telemetry-grid">
+            <div class="telemetry-card">
+              <span class="telem-lbl">GPS ALTITUDE</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-altitude">0.0</span>
+                <span class="telem-unit">m</span>
+              </div>
+              <div class="telem-minmax"><span class="lbl">MAX</span><span class="val font-mono" id="max-altitude">0.0</span></div>
+            </div>
+            
+            <div class="telemetry-card">
+              <span class="telem-lbl">DESCENT RATE</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-descent-rate">0.0</span>
+                <span class="telem-unit">m/s</span>
+              </div>
+              <div class="telem-minmax"><span class="lbl">MAX</span><span class="val font-mono" id="max-descent">0.0</span></div>
+            </div>
+            
+            <div class="telemetry-card">
+              <span class="telem-lbl">BAROMETRIC PRESSURE</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-pressure">1013.25</span>
+                <span class="telem-unit">hPa</span>
+              </div>
+              <div class="telem-minmax"><span class="lbl">MIN</span><span class="val font-mono" id="min-pressure">1013.2</span></div>
+            </div>
+            
+            <div class="telemetry-card">
+              <span class="telem-lbl">AMBIENT TEMP</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-temp">25.0</span>
+                <span class="telem-unit">°C</span>
+              </div>
+              <div class="telem-minmax"><span class="lbl">PEAK</span><span class="val font-mono" id="max-temp">25.0</span></div>
+            </div>
+
+            <div class="telemetry-card">
+              <span class="telem-lbl">BUS VOLTAGE</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-voltage">4.20</span>
+                <span class="telem-unit">V</span>
+              </div>
+              <div class="telem-minmax"><span class="lbl">MIN</span><span class="val font-mono" id="min-voltage">4.20</span></div>
+            </div>
+
+            <div class="telemetry-card">
+              <span class="telem-lbl">RF SIGNAL (RSSI)</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-rssi">100</span>
+                <span class="telem-unit">dBm</span>
+              </div>
+              <div class="telem-minmax"><span class="lbl">LOSS</span><span class="val font-mono" id="packet-loss">0%</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Payload Telemetry -->
+        <div class="telemetry-section-group border-top-glow">
+          <div class="section-title">
+            <span>SECONDARY SCIENCE PAYLOAD (CUBE)</span>
+            <div class="status-pulse-pill inactive" id="payload-status"><span class="pulse-dot"></span><span>DOCKED</span></div>
+          </div>
+          
+          <div class="telemetry-grid">
+            <div class="telemetry-card">
+              <span class="telem-lbl">PITCH SENSOR</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-pitch">0.0</span>
+                <span class="telem-unit">°</span>
+              </div>
+            </div>
+            
+            <div class="telemetry-card">
+              <span class="telem-lbl">ROLL SENSOR</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-roll">0.0</span>
+                <span class="telem-unit">°</span>
+              </div>
+            </div>
+            
+            <div class="telemetry-card">
+              <span class="telem-lbl">YAW COMPASS</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-yaw">0.0</span>
+                <span class="telem-unit">°</span>
+              </div>
+            </div>
+
+            <div class="telemetry-card card-double">
+              <span class="telem-lbl">GPS GEOLOCATION</span>
+              <div class="telem-val-wrap">
+                <div class="latlon-display font-mono">
+                  <div>LAT: <span id="telem-lat">13.725900° N</span></div>
+                  <div>LON: <span id="telem-lon">80.226600° E</span></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="telemetry-card">
+              <span class="telem-lbl">GPS SATELLITES</span>
+              <div class="telem-val-wrap">
+                <span class="telem-val font-mono" id="telem-satellites">12</span>
+                <span class="telem-unit">LOCK</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section: Dynamic Physical State Info -->
+        <div class="telemetry-section-group border-top-glow">
+          <div class="section-title">
+            <span>ORBITAL FLIGHT METRICS</span>
+          </div>
+          <div class="metrics-list font-mono">
+            <div class="metric-item">
+              <span class="m-label">GROUND RANGE:</span>
+              <span class="m-val" id="metric-range">0.00 m</span>
+            </div>
+            <div class="metric-item">
+              <span class="m-label">UPLINK AZIMUTH:</span>
+              <span class="m-val" id="metric-azimuth">0.0° N</span>
+            </div>
+            <div class="metric-item">
+              <span class="m-label">APOGEE REACHED:</span>
+              <span class="m-val" id="metric-apogee">NO</span>
+            </div>
+            <div class="metric-item">
+              <span class="m-label">PARACHUTE DEPLOY:</span>
+              <span class="m-val font-mono text-muted" id="metric-parachute">ARMED</span>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </aside>
+
+    <!-- Center Section Grid -->
+    <div class="center-content-grid">
+      
+      <!-- Top Row: Orientation Visualizer & Live Stream -->
+      <div class="visualizer-row">
+        <!-- Orientation Panel -->
+        <div class="panel orientation-panel">
+          <div class="panel-header">
+            <div class="panel-header-title">
+              <i data-lucide="compass"></i>
+              <span>3D PAYLOAD SPATIAL ORIENTATION</span>
+            </div>
+          </div>
+          <div class="panel-content orientation-content-container">
+            <div id="three-canvas-container" class="orientation-canvas"></div>
+            <!-- Glass Overlay Instrument indicators -->
+            <div class="flight-director-overlay font-mono">
+              <div class="fd-row"><span>PTCH:</span><span id="fd-pitch" class="text-white">0.0°</span></div>
+              <div class="fd-row"><span>ROLL:</span><span id="fd-roll" class="text-white">0.0°</span></div>
+              <div class="fd-row"><span>YAW:</span><span id="fd-yaw" class="text-white">0.0°</span></div>
+              <div class="fd-row"><span>ALT:</span><span id="fd-alt" class="text-cyan">0.0m</span></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Video Stream Panel -->
+        <div class="panel camera-panel">
+          <div class="panel-header">
+            <div class="panel-header-title">
+              <i data-lucide="video"></i>
+              <span>LIVE CAM MULTICAST FEED</span>
+            </div>
+            <div class="camera-controls">
+              <select id="camera-select" class="control-select font-mono">
+                <option value="">CAMERA FEED [OFF]</option>
+              </select>
+              <div class="stream-indicators font-mono">
+                <span class="stream-fps"><span id="live-fps">0</span> FPS</span>
+                <span class="stream-rec inactive" id="stream-rec-icon"><span class="rec-dot"></span> FEED</span>
+              </div>
+            </div>
+          </div>
+          <div class="panel-content camera-view-container">
+            <video id="webcam-video" autoplay playsinline muted></video>
+            
+            <!-- Video Overlay HUD -->
+            <div class="camera-hud-overlay font-mono">
+              <div class="hud-center-reticle"></div>
+              <div class="hud-top-left">
+                <div>SYS-ID: CANSAT-2026-SHAR</div>
+                <div>ANTENNA LINK: DOCKED</div>
+              </div>
+              <div class="hud-top-right">
+                <div class="text-success" id="hud-sim-state">SIM: PRELAUNCH</div>
+                <div id="hud-timestamp">00:00:00 UTC</div>
+              </div>
+              <div class="hud-bottom-left">
+                <div>ALT: <span id="hud-alt">0.0</span> m</div>
+                <div>DES: <span id="hud-descent">0.0</span> m/s</div>
+              </div>
+              <div class="hud-bottom-right">
+                <div>AZI: <span id="hud-azimuth">0.0°</span></div>
+                <div>BAT: <span id="hud-voltage">4.20 V</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Real-Time Telemetry Graph Grid -->
+      <div class="panel graphs-panel">
+        <div class="panel-header">
+          <div class="panel-header-title">
+            <i data-lucide="line-chart"></i>
+            <span>REAL-TIME TELEMETRY PLOTTING BOARD</span>
+          </div>
+          <div class="graph-legend font-mono">
+            <span class="lg-cyan"><span class="lg-dot"></span> ALTITUDE</span>
+            <span class="lg-purple"><span class="lg-dot"></span> PRESSURE</span>
+            <span class="lg-orange"><span class="lg-dot"></span> TEMP</span>
+            <span class="lg-green"><span class="lg-dot"></span> VOLTAGE</span>
+          </div>
+        </div>
+        
+        <div class="panel-content charts-grid-container">
+          <!-- 4 Chart Canvases in 2x2 grid, plus 1 descent rate chart in secondary display -->
+          <div class="chart-wrapper">
+            <div class="chart-header-overlay font-mono">ALTITUDE (m)</div>
+            <canvas id="chart-altitude"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <div class="chart-header-overlay font-mono">PRESSURE (hPa)</div>
+            <canvas id="chart-pressure"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <div class="chart-header-overlay font-mono">TEMPERATURE (°C)</div>
+            <canvas id="chart-temperature"></canvas>
+          </div>
+          <div class="chart-wrapper">
+            <div class="chart-header-overlay font-mono">BATTERY (V) & DESCENT RATE (m/s)</div>
+            <canvas id="chart-combined"></canvas>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Column 3: Critical Uplink & Fault Logs (Right) -->
+    <aside class="panel command-panel">
+      
+      <!-- Sub-panel: System Health Status -->
+      <div class="health-indicator-container">
+        <div class="health-header">
+          <span class="font-mono label">FLIGHT ENGINE SYSTEM HEALTH</span>
+          <span class="health-status-value font-mono text-success" id="health-overall">NOMINAL</span>
+        </div>
+        <div class="health-indicators-grid">
+          <div class="health-light-card" id="hl-descent">
+            <span class="hl-dot green"></span>
+            <span class="hl-text font-mono">DSC RATE</span>
+          </div>
+          <div class="health-light-card" id="hl-gps">
+            <span class="hl-dot green"></span>
+            <span class="hl-text font-mono">GPS LOCK</span>
+          </div>
+          <div class="health-light-card" id="hl-separation">
+            <span class="hl-dot green"></span>
+            <span class="hl-text font-mono">SEP SYS</span>
+          </div>
+          <div class="health-light-card" id="hl-parachute">
+            <span class="hl-dot green"></span>
+            <span class="hl-text font-mono">PARA ACT</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Fault Monitoring Display -->
+      <div class="fault-code-panel border-top-glow">
+        <div class="section-title">
+          <span>AEROSPACE HEX FAULT REGISTER</span>
+        </div>
+        <div class="fault-display-box font-mono">
+          <div class="fault-digit" id="fd-d1" title="Digit 1: Descent Rate Fault">0</div>
+          <div class="fault-digit" id="fd-d2" title="Digit 2: GPS Lock Fault">0</div>
+          <div class="fault-digit" id="fd-d3" title="Digit 3: Payload Separation Fault">0</div>
+          <div class="fault-digit" id="fd-d4" title="Digit 4: Parachute System Fault">0</div>
+        </div>
+        <div class="fault-status-subtitle font-mono text-muted text-center" id="fault-register-lbl">
+          REGISTER FLAG: 0x0000 (SYS_NORMAL)
+        </div>
+      </div>
+
+      <!-- Sub-panel: Critical Mission Controls -->
+      <div class="mission-controls-wrapper border-top-glow">
+        <div class="section-title">
+          <span>CRITICAL MISSION COMMANDS</span>
+        </div>
+        
+        <div class="control-actions-list">
+          <!-- Command 1: Manual Separation -->
+          <div class="cmd-item">
+            <div class="cmd-details">
+              <span class="cmd-title font-mono text-danger"><i data-lucide="unlock"></i> PAYLOAD SEPARATION</span>
+              <span class="cmd-desc text-muted">Jettison CanSat from launcher container</span>
+            </div>
+            
+            <div class="safety-slider-container" id="slider-separation">
+              <div class="safety-track">
+                <span class="safety-track-text font-mono">SLIDE TO DISENGAGE RESTRAINT</span>
+                <div class="safety-handle" tabindex="0">
+                  <i data-lucide="chevrons-right"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Command 2: Parachute Deployment -->
+          <div class="cmd-item">
+            <div class="cmd-details">
+              <span class="cmd-title font-mono text-warning"><i data-lucide="umbrella"></i> EMERGENCY PARACHUTE</span>
+              <span class="cmd-desc text-muted">Forced deploy of secondary redundancy</span>
+            </div>
+            
+            <div class="safety-slider-container" id="slider-parachute">
+              <div class="safety-track">
+                <span class="safety-track-text font-mono">SLIDE TO FIRE DETONATOR</span>
+                <div class="safety-handle" tabindex="0">
+                  <i data-lucide="chevrons-right"></i>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Command 3: Redundant System Activation -->
+          <div class="cmd-item">
+            <div class="cmd-details">
+              <span class="cmd-title font-mono text-cyan"><i data-lucide="power"></i> REDUNDANT BATTERY</span>
+              <span class="cmd-desc text-muted">Route avionics power through secondary cells</span>
+            </div>
+            
+            <button class="cmd-action-btn font-mono" id="btn-redundant-active">
+              <span>ENGAGE AUX CIRCUIT</span>
+              <i data-lucide="power"></i>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Sub-panel: Live Alerts Terminal Logs -->
+      <div class="terminal-panel border-top-glow">
+        <div class="section-title">
+          <span>TELEMETRY COMMAND & ALERTS LOGGER</span>
+        </div>
+        <div class="terminal-container scrollable-panel font-mono" id="command-log">
+          <div class="terminal-line text-muted">[09:59:09] SYSTEM BOOTING: GCS core initialization complete.</div>
+          <div class="terminal-line text-muted">[09:59:09] SYS-MON: Self-test passed. Avionics links armed.</div>
+          <div class="terminal-line text-success">[09:59:10] GROUND STATION: Connected on channel SHAR-GS-A.</div>
+        </div>
+      </div>
+
+    </aside>
+
+    <!-- Bottom Row: Real-Time Coordinate Flight Path Tracker Map -->
+    <footer class="panel map-panel">
+      <div class="panel-header">
+        <div class="panel-header-title">
+          <i data-lucide="map-pin"></i>
+          <span>REAL-TIME PAYLOAD TRAJECTORY FLIGHT PATH TRACKING (GPS-RTK)</span>
+        </div>
+        <div class="map-coordinates font-mono text-cyan">
+          <span class="border-right-dash pr-3 mr-3">GROUND STATION: <span class="text-white">13.7259° N, 80.2266° E</span></span>
+          <span class="border-right-dash pr-3 mr-3">PAYLOAD COORDS: <span class="text-white" id="map-telem-coords">0.0000° N, 0.0000° E</span></span>
+          <span>SATELLITES IN FOCUS: <span class="text-white animate-pulse" id="map-sat-count">0 LOCK</span></span>
+        </div>
+      </div>
+      <div class="panel-content map-content-container">
+        <div id="map-container" class="leaflet-map-element"></div>
+      </div>
+    </footer>
+
+  </main>
+
+  <!-- Interactive Confirmation Dialog for Safe Critical Actions -->
+  <div class="confirmation-overlay hidden" id="confirmation-dialog">
+    <div class="dialog-card border-glow-alert">
+      <div class="dialog-header">
+        <i data-lucide="alert-triangle" class="text-danger animate-bounce text-xl"></i>
+        <h3 class="dialog-title font-mono text-danger">CRITICAL UPLINK CONFIRMATION</h3>
+      </div>
+      <div class="dialog-body font-mono">
+        <p class="mb-4">You are about to upload a critical mission override command to flight computers. This action is irreversible.</p>
+        <div class="dialog-cmd-details" id="dialog-desc">
+          COMMAND: Manual separation override
+        </div>
+      </div>
+      <div class="dialog-footer">
+        <button id="dialog-cancel" class="btn btn-secondary font-mono">ABORT OPERATION</button>
+        <button id="dialog-confirm" class="btn btn-danger font-mono">TRANSMIT UPLINK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Custom ES Modules JavaScript Hook -->
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

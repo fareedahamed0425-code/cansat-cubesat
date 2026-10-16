@@ -1,0 +1,1219 @@
+/* ==========================================================================
+   CanSat Ground Control System - Aerospace Styling Sheet
+   Aesthetics: Clinical, Engineered, Dark Aerospace Command Center
+   ========================================================================== */
+
+/* Design Tokens (CSS Variables) */
+:root {
+  --bg-primary: #07090e;
+  --bg-panel: #0e121a;
+  --bg-panel-elevated: #131924;
+  --border-color: #1e2633;
+  --border-active: #2f3c52;
+  --border-glow-color: rgba(14, 165, 233, 0.15);
+  
+  --accent: #0ea5e9;
+  --accent-muted: #0284c7;
+  --accent-dim: rgba(14, 165, 233, 0.1);
+  --success: #10b981;
+  --success-dim: rgba(16, 185, 129, 0.1);
+  --warning: #f59e0b;
+  --warning-dim: rgba(245, 158, 11, 0.1);
+  --danger: #ef4444;
+  --danger-dim: rgba(239, 68, 68, 0.1);
+  
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #475569;
+  
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-mono: 'IBM Plex Mono', SFMono-Regular, Consolas, "Liberation Mono", Menlo, monospace;
+  --font-display: 'Space Grotesk', sans-serif;
+}
+
+/* Global Reset & Base Styling */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.5;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Custom Scrollbars for Panels */
+.scrollable-panel::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+.scrollable-panel::-webkit-scrollbar-track {
+  background: var(--bg-panel);
+}
+.scrollable-panel::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+.scrollable-panel::-webkit-scrollbar-thumb:hover {
+  background: var(--border-active);
+}
+
+/* ==========================================================================
+   Header / Mission Control Bar
+   ========================================================================== */
+.mission-header {
+  height: 60px;
+  background-color: var(--bg-panel);
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  z-index: 100;
+  flex-shrink: 0;
+}
+
+.header-left, .header-right {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.mission-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.mission-logo i {
+  width: 24px;
+  height: 24px;
+  color: var(--accent);
+}
+.logo-text {
+  display: flex;
+  flex-direction: column;
+}
+.logo-sub {
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+  letter-spacing: 0.1em;
+}
+.logo-main {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+}
+
+.mission-status-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: rgba(30, 38, 51, 0.4);
+  border: 1px solid var(--border-color);
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 500;
+}
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--text-muted);
+}
+.status-dot.green {
+  background-color: var(--success);
+  box-shadow: 0 0 8px var(--success);
+}
+.status-dot.red {
+  background-color: var(--danger);
+  box-shadow: 0 0 8px var(--danger);
+}
+.status-dot.amber {
+  background-color: var(--warning);
+  box-shadow: 0 0 8px var(--warning);
+}
+
+/* Header Counters Display */
+.header-center {
+  display: flex;
+  align-items: center;
+  background-color: rgba(7, 9, 14, 0.6);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  height: 38px;
+}
+.meta-counter {
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  height: 100%;
+}
+.border-right {
+  border-right: 1px solid var(--border-color);
+}
+.counter-label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 0.1em;
+  margin-bottom: 2px;
+}
+.counter-val {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* Header Buttons & Controls */
+.btn-group {
+  display: flex;
+  gap: 6px;
+}
+
+.btn {
+  background-color: var(--bg-panel-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+  font-size: 10px;
+  font-weight: 600;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.15s ease;
+}
+.btn i {
+  width: 12px;
+  height: 12px;
+}
+.btn:hover:not(.disabled):not(:disabled) {
+  border-color: var(--border-active);
+  background-color: rgba(30, 38, 51, 0.6);
+}
+.btn.disabled, .btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
+.btn-success {
+  color: var(--success);
+  border-color: rgba(16, 185, 129, 0.4);
+}
+.btn-success:hover:not(.disabled):not(:disabled) {
+  background-color: var(--success-dim) !important;
+  border-color: var(--success);
+}
+
+.btn-danger {
+  color: var(--danger);
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.btn-danger:hover:not(.disabled):not(:disabled) {
+  background-color: var(--danger-dim) !important;
+  border-color: var(--danger);
+}
+
+.btn-accent {
+  color: var(--accent);
+  border-color: rgba(14, 165, 233, 0.4);
+}
+.btn-accent:hover:not(.disabled):not(:disabled) {
+  background-color: var(--accent-dim) !important;
+  border-color: var(--accent);
+}
+
+/* Export Dropdown */
+.export-dropdown {
+  position: relative;
+  display: inline-block;
+}
+.dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  background-color: var(--bg-panel-elevated);
+  border: 1px solid var(--border-color);
+  min-width: 180px;
+  box-shadow: 0 8px 16px rgba(0,0,0,0.5);
+  border-radius: 3px;
+  z-index: 105;
+}
+.dropdown-content a {
+  color: var(--text-secondary);
+  padding: 10px 14px;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+  transition: all 0.15s ease;
+}
+.dropdown-content a:hover {
+  background-color: var(--border-color);
+  color: var(--text-primary);
+}
+.dropdown-content a i {
+  width: 14px;
+  height: 14px;
+}
+.export-dropdown:hover .dropdown-content {
+  display: block;
+}
+
+/* ==========================================================================
+   Master Layout System (CSS Grid Container)
+   ========================================================================== */
+.gcs-grid-container {
+  flex-grow: 1;
+  display: grid;
+  grid-template-columns: 340px 1fr 340px;
+  grid-template-rows: 1fr 240px;
+  gap: 8px;
+  padding: 8px;
+  overflow: hidden;
+  background-color: var(--bg-primary);
+}
+
+/* Panel Containers */
+.panel {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  transition: border-color 0.2s ease;
+}
+.panel:hover {
+  border-color: var(--border-active);
+}
+
+/* Panel Header Component */
+.panel-header {
+  height: 38px;
+  padding: 0 12px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: rgba(14, 18, 26, 0.4);
+  flex-shrink: 0;
+}
+.panel-header-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+}
+.panel-header-title i {
+  width: 15px;
+  height: 15px;
+  color: var(--accent);
+}
+.panel-header-title span {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 12px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.panel-content {
+  flex-grow: 1;
+  padding: 12px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.scrollable-panel {
+  overflow-y: auto;
+}
+
+/* Left & Right Sidebar sizing spans */
+.telemetry-panel {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.command-panel {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+/* Bottom Trajectory Map Panel span */
+.map-panel {
+  grid-column: 1 / span 3;
+  grid-row: 2;
+}
+
+/* Center Panel Grid Area */
+.center-content-grid {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   Left Panel: Sensor Telemetry Cards
+   ========================================================================== */
+.telemetry-section-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+.telemetry-section-group:last-child {
+  margin-bottom: 0;
+}
+
+.border-top-glow {
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+}
+
+.section-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: 0.08em;
+}
+
+/* Uplink / Docked status pills */
+.status-pulse-pill {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 7px;
+  background-color: var(--success-dim);
+  border: 1px solid rgba(16, 185, 129, 0.2);
+  color: var(--success);
+  padding: 2px 6px;
+  border-radius: 10px;
+  font-weight: bold;
+}
+.status-pulse-pill.inactive {
+  background-color: var(--text-muted);
+  border-color: transparent;
+  color: var(--text-secondary);
+}
+.pulse-dot {
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+.status-pulse-pill:not(.inactive) .pulse-dot {
+  animation: pulse-light 1.2s infinite ease-in-out;
+}
+
+.telemetry-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+
+/* Core Telemetry Cards */
+.telemetry-card {
+  background-color: rgba(22, 28, 41, 0.4);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 76px;
+  position: relative;
+  transition: all 0.15s ease;
+}
+.telemetry-card:hover {
+  border-color: var(--border-active);
+  background-color: rgba(22, 28, 41, 0.6);
+}
+
+.telem-lbl {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+
+.telem-val-wrap {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: 2px;
+}
+.telem-val {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.02em;
+}
+.telem-unit {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-left: 2px;
+}
+
+.telem-minmax {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 9px;
+  color: var(--text-muted);
+  margin-top: auto;
+  border-top: 1px dashed rgba(34, 43, 59, 0.5);
+  padding-top: 2px;
+}
+.telem-minmax .val {
+  color: var(--text-secondary);
+}
+
+/* Double-width telemetry card */
+.card-double {
+  grid-column: span 2;
+}
+
+.latlon-display {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* Metrics List Details */
+.metrics-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 12px;
+}
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 8px;
+  background-color: rgba(7, 9, 14, 0.4);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+}
+.metric-item .m-label {
+  color: var(--text-secondary);
+}
+.metric-item .m-val {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+/* ==========================================================================
+   Center Panel: Visualizers & Camera Grid
+   ========================================================================== */
+.visualizer-row {
+  display: grid;
+  grid-template-columns: 1fr 1.2fr;
+  gap: 8px;
+  height: 300px;
+  flex-shrink: 0;
+}
+
+.orientation-panel, .camera-panel {
+  height: 100%;
+}
+
+.orientation-content-container {
+  position: relative;
+  padding: 0;
+  background-color: #07090d;
+}
+.orientation-canvas {
+  width: 100%;
+  height: 100%;
+}
+
+/* Attitude indicator digital overlay overlay */
+.flight-director-overlay {
+  position: absolute;
+  bottom: 8px;
+  left: 8px;
+  background-color: rgba(7, 9, 14, 0.85);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  padding: 6px 10px;
+  font-size: 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  z-index: 10;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.5);
+  pointer-events: none;
+}
+.fd-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--text-secondary);
+}
+
+/* Live Video Panel */
+.camera-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.control-select {
+  background-color: var(--bg-panel-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 10px;
+  height: 28px;
+  padding: 0 6px;
+  border-radius: 2px;
+  outline: none;
+  cursor: pointer;
+}
+.control-select:focus {
+  border-color: var(--border-active);
+}
+
+.stream-indicators {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 11px;
+}
+.stream-fps {
+  color: var(--text-secondary);
+}
+.stream-rec {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--danger);
+  font-weight: bold;
+}
+.stream-rec.inactive {
+  color: var(--text-muted);
+}
+.rec-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+.stream-rec:not(.inactive) .rec-dot {
+  animation: blink-rec 1s infinite alternate;
+}
+
+.camera-view-container {
+  position: relative;
+  padding: 0;
+  background-color: #030406;
+}
+.camera-view-container video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.75;
+}
+
+/* Video Overlay HUD Design */
+.camera-hud-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  padding: 10px;
+  font-size: 10px;
+  color: rgba(226, 232, 240, 0.6);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.hud-center-reticle {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  border: 1px solid rgba(14, 165, 233, 0.3);
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.hud-center-reticle::before, .hud-center-reticle::after {
+  content: '';
+  position: absolute;
+  background-color: rgba(14, 165, 233, 0.3);
+}
+.hud-center-reticle::before {
+  top: 50%;
+  left: -5px;
+  width: 40px;
+  height: 1px;
+}
+.hud-center-reticle::after {
+  left: 50%;
+  top: -5px;
+  width: 1px;
+  height: 40px;
+}
+
+.hud-top-left, .hud-bottom-left {
+  text-align: left;
+}
+.hud-top-right, .hud-bottom-right {
+  text-align: right;
+}
+.hud-bottom-left, .hud-bottom-right {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  height: 100%;
+}
+.camera-hud-overlay > div {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.camera-hud-overlay .hud-bottom-left, .camera-hud-overlay .hud-bottom-right {
+  position: absolute;
+  bottom: 10px;
+}
+.camera-hud-overlay .hud-bottom-left { left: 10px; }
+.camera-hud-overlay .hud-bottom-right { right: 10px; }
+
+/* Real-Time Telemetry Graph Grid */
+.graphs-panel {
+  flex-grow: 1;
+}
+
+.graph-legend {
+  display: flex;
+  gap: 12px;
+  font-size: 10px;
+}
+.graph-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.lg-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: currentColor;
+}
+.lg-cyan { color: var(--accent); }
+.lg-purple { color: #8b5cf6; }
+.lg-orange { color: #f97316; }
+.lg-green { color: var(--success); }
+
+.charts-grid-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 8px;
+  padding: 6px;
+  background-color: #07090c;
+}
+.chart-wrapper {
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  min-height: 0; /* Important for flex/grid sizing */
+}
+.chart-header-overlay {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-primary);
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.chart-wrapper canvas {
+  flex-grow: 1;
+  max-height: calc(100% - 12px);
+  width: 100% !important;
+}
+
+/* ==========================================================================
+   Right Panel: Command, Control, and Fault Indicators
+   ========================================================================== */
+.command-panel .panel-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+/* Flight health system status lights */
+.health-indicator-container {
+  background-color: rgba(22, 28, 41, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 10px;
+}
+.health-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.health-header .label {
+  font-size: 10px;
+  color: var(--text-secondary);
+  letter-spacing: 0.05em;
+}
+.health-status-value {
+  font-weight: bold;
+  font-size: 13px;
+}
+
+.health-indicators-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 6px;
+}
+.health-light-card {
+  background-color: var(--bg-panel-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  padding: 6px 8px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.hl-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: var(--text-muted);
+  box-shadow: none;
+}
+.hl-dot.green { background-color: var(--success); box-shadow: 0 0 6px var(--success); }
+.hl-dot.amber { background-color: var(--warning); box-shadow: 0 0 6px var(--warning); }
+.hl-dot.red { background-color: var(--danger); box-shadow: 0 0 6px var(--danger); }
+.hl-text {
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* Hex fault indicators */
+.fault-code-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.fault-display-box {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  background-color: #07090c;
+  border: 1px solid var(--border-color);
+  padding: 10px;
+  border-radius: 3px;
+}
+.fault-digit {
+  font-family: var(--font-mono);
+  font-size: 28px;
+  font-weight: bold;
+  color: var(--text-muted);
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  width: 38px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 2px;
+  cursor: help;
+  transition: all 0.2s ease;
+}
+.fault-digit.active {
+  color: var(--danger);
+  border-color: var(--danger);
+  background-color: var(--danger-dim);
+  box-shadow: 0 0 8px rgba(239, 68, 68, 0.2);
+}
+
+/* Mission override safety controls */
+.mission-controls-wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.control-actions-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cmd-item {
+  background-color: rgba(22, 28, 41, 0.2);
+  border: 1px solid var(--border-color);
+  border-radius: 3px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cmd-details {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.cmd-title {
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.cmd-title i {
+  width: 12px;
+  height: 12px;
+}
+.cmd-desc {
+  font-size: 10px;
+}
+
+/* Safety Sliders Tracks */
+.safety-slider-container {
+  width: 100%;
+  position: relative;
+}
+.safety-track {
+  background-color: #07090c;
+  border: 1px solid var(--border-color);
+  height: 32px;
+  border-radius: 3px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+.safety-track-text {
+  font-size: 9px;
+  color: var(--text-muted);
+  font-weight: bold;
+  letter-spacing: 0.05em;
+  pointer-events: none;
+  z-index: 1;
+}
+.safety-handle {
+  position: absolute;
+  left: 1px;
+  top: 1px;
+  height: 28px;
+  width: 42px;
+  background-color: var(--bg-panel-elevated);
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  z-index: 2;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+.safety-handle i {
+  width: 12px;
+  height: 12px;
+  color: var(--text-secondary);
+}
+.safety-handle:hover {
+  background-color: var(--border-color);
+  border-color: var(--border-active);
+}
+.safety-handle:active {
+  cursor: grabbing;
+}
+.safety-slider-container.active-lock .safety-track {
+  border-color: rgba(239, 68, 68, 0.4);
+}
+.safety-slider-container.active-lock .safety-handle {
+  background-color: var(--danger-dim);
+  border-color: var(--danger);
+}
+.safety-slider-container.active-lock .safety-handle i {
+  color: var(--danger);
+}
+
+/* Aux activation push button */
+.cmd-action-btn {
+  background-color: var(--bg-panel-elevated);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  height: 32px;
+  border-radius: 3px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  font-size: 10px;
+  font-weight: bold;
+  transition: all 0.15s ease;
+}
+.cmd-action-btn i {
+  width: 12px;
+  height: 12px;
+  color: var(--accent);
+}
+.cmd-action-btn:hover {
+  background-color: rgba(14, 165, 233, 0.08);
+  border-color: var(--accent);
+}
+.cmd-action-btn.active {
+  background-color: var(--accent-dim);
+  border-color: var(--accent);
+  box-shadow: 0 0 6px var(--accent);
+}
+
+/* Operational Command Logger / Terminal */
+.terminal-panel {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 100px;
+}
+.terminal-container {
+  flex-grow: 1;
+  background-color: #040609;
+  border: 1px solid var(--border-color);
+  border-radius: 2px;
+  padding: 6px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.terminal-line {
+  font-size: 10px;
+  line-height: 1.3;
+  word-break: break-all;
+}
+.terminal-line.text-muted { color: var(--text-muted); }
+.terminal-line.text-white { color: var(--text-primary); }
+.terminal-line.text-success { color: var(--success); }
+.terminal-line.text-warning { color: var(--warning); }
+.terminal-line.text-danger { color: var(--danger); }
+.terminal-line.text-cyan { color: var(--accent); }
+
+/* ==========================================================================
+   Bottom Panel: Leaflet Orbital Coordinates Map
+   ========================================================================== */
+.map-coordinates {
+  display: flex;
+  align-items: center;
+  font-size: 11px;
+  gap: 12px;
+}
+.pr-3 { padding-right: 12px; }
+.mr-3 { margin-right: 12px; }
+.border-right-dash {
+  border-right: 1px dashed var(--border-color);
+}
+
+.map-content-container {
+  padding: 0;
+  background-color: #0a0e14;
+}
+.leaflet-map-element {
+  width: 100%;
+  height: 100%;
+}
+
+/* Custom leaflet map adjustments to match theme colors */
+.leaflet-container {
+  background-color: #07090e !important;
+}
+.leaflet-bar {
+  border: 1px solid var(--border-color) !important;
+  box-shadow: none !important;
+}
+.leaflet-bar a {
+  background-color: var(--bg-panel) !important;
+  color: var(--text-secondary) !important;
+  border-bottom: 1px solid var(--border-color) !important;
+  transition: all 0.15s ease;
+}
+.leaflet-bar a:hover {
+  background-color: var(--bg-panel-elevated) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Premium dark aerospace theme for Leaflet layers control */
+.leaflet-control-layers {
+  background-color: var(--bg-panel) !important;
+  border: 1px solid var(--border-color) !important;
+  color: var(--text-primary) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 10px !important;
+  border-radius: 3px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5) !important;
+}
+
+.leaflet-control-layers-toggle {
+  background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%230ea5e9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"></polygon><polyline points="2 17 12 22 22 17"></polyline><polyline points="2 12 12 17 22 12"></polyline></svg>') !important;
+  background-size: 18px 18px !important;
+  background-position: center !important;
+  background-repeat: no-repeat !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 3px !important;
+}
+
+.leaflet-control-layers-expanded {
+  padding: 8px 12px !important;
+  background-color: var(--bg-panel) !important;
+}
+
+.leaflet-control-layers-selector {
+  margin-right: 6px !important;
+  accent-color: var(--accent) !important;
+}
+
+.leaflet-control-layers-list label {
+  margin-bottom: 4px;
+  display: block;
+  cursor: pointer;
+}
+
+.leaflet-control-layers-list label:last-child {
+  margin-bottom: 0;
+}
+
+/* ==========================================================================
+   Overlay Dialog: Critical Command Lock confirmation
+   ========================================================================== */
+.confirmation-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(7, 9, 14, 0.85);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(2px);
+}
+.confirmation-overlay.hidden {
+  display: none;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.dialog-card {
+  width: 420px;
+  background-color: var(--bg-panel);
+  border: 1px solid var(--border-color);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.8);
+  border-radius: 4px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.border-glow-alert {
+  border-color: rgba(239, 68, 68, 0.5);
+  box-shadow: 0 0 16px rgba(239, 68, 68, 0.15);
+}
+
+.dialog-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--border-color);
+  padding-bottom: 10px;
+}
+.dialog-title {
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+}
+
+.dialog-body {
+  font-size: 11px;
+  color: var(--text-secondary);
+}
+.dialog-cmd-details {
+  background-color: #07090c;
+  border: 1px solid var(--border-color);
+  border-left: 2px solid var(--danger);
+  padding: 8px 10px;
+  color: var(--text-primary);
+  font-weight: 600;
+  font-size: 10px;
+  margin-top: 10px;
+}
+
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid var(--border-color);
+  padding-top: 10px;
+}
+
+.mb-4 { margin-bottom: 16px; }
+
+/* ==========================================================================
+   Animations & Transitions Keyframes
+   ========================================================================== */
+@keyframes pulse-light {
+  0%, 100% { opacity: 0.45; }
+  50% { opacity: 1; }
+}
+
+@keyframes blink-rec {
+  0% { opacity: 0.2; }
+  100% { opacity: 1; }
+}
+
+/* Flash effect for new packets */
+.telemetry-card.flash-update {
+  animation: card-flash 0.15s ease-out;
+}
+@keyframes card-flash {
+  0% { border-color: var(--accent); background-color: var(--accent-dim); }
+  100% { border-color: var(--border-color); background-color: rgba(22, 28, 41, 0.4); }
+}
