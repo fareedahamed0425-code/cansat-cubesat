@@ -285,7 +285,7 @@ body {
   flex-grow: 1;
   display: grid;
   grid-template-columns: 340px 1fr 340px;
-  grid-template-rows: 1fr 240px;
+  grid-template-rows: 1fr 190px;
   gap: 8px;
   padding: 8px;
   overflow: hidden;
@@ -552,7 +552,7 @@ body {
   display: grid;
   grid-template-columns: 1fr 1.2fr;
   gap: 8px;
-  height: 300px;
+  height: 195px;
   flex-shrink: 0;
 }
 
@@ -726,10 +726,11 @@ body {
 
 /* Real-Time Telemetry Graph Grid */
 .graphs-panel {
-  flex-shrink: 0;
-  height: auto;
+  flex-grow: 1;
+  min-height: 0;
   display: flex;
   flex-direction: column;
+  overflow: hidden;
 }
 
 .graph-legend {
@@ -756,34 +757,48 @@ body {
 .charts-grid-container {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  grid-template-rows: 200px 200px;
-  gap: 8px;
-  padding: 8px;
+  grid-template-rows: 1fr 1fr;
+  gap: 6px;
+  padding: 6px;
   background-color: #07090c;
+  flex-grow: 1;
+  min-height: 0;
+  height: 100%;
 }
 .chart-wrapper {
   background-color: var(--bg-panel);
   border: 1px solid var(--border-color);
   border-radius: 3px;
-  padding: 8px;
+  padding: 4px 8px 2px 8px;
   display: flex;
   flex-direction: column;
   position: relative;
-  height: 200px;
-  min-height: 200px;
+  min-height: 0;
+  height: 100%;
+  overflow: hidden;
 }
 .chart-header-overlay {
-  font-size: 11px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
   font-weight: 600;
   color: var(--text-primary);
-  letter-spacing: 0.05em;
-  margin-bottom: 4px;
+  letter-spacing: 0.04em;
+  margin-bottom: 2px;
   text-transform: uppercase;
+  flex-shrink: 0;
+}
+.chart-live-val {
+  font-weight: 700;
+  font-size: 11px;
+  font-family: var(--font-mono);
 }
 .chart-wrapper canvas {
   flex-grow: 1;
   width: 100% !important;
-  height: 160px !important;
+  height: 100% !important;
+  min-height: 0;
   max-height: calc(100% - 16px);
 }
 

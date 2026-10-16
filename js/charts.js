@@ -67,8 +67,9 @@ class ChartsBoard {
             color: CONFIG.CHARTS.TICK_COLOR,
             font: {
               family: CONFIG.CHARTS.FONT_FAMILY,
-              size: 11
-            }
+              size: 9
+            },
+            maxTicksLimit: 4
           }
         }
       }
@@ -182,7 +183,8 @@ class ChartsBoard {
             },
             ticks: {
               color: '#10b981',
-              font: { family: CONFIG.CHARTS.FONT_FAMILY, size: 11 }
+              font: { family: CONFIG.CHARTS.FONT_FAMILY, size: 9 },
+              maxTicksLimit: 4
             },
             suggestedMin: 3.2,
             suggestedMax: 4.3
@@ -194,7 +196,8 @@ class ChartsBoard {
             },
             ticks: {
               color: '#ef4444',
-              font: { family: CONFIG.CHARTS.FONT_FAMILY, size: 11 }
+              font: { family: CONFIG.CHARTS.FONT_FAMILY, size: 9 },
+              maxTicksLimit: 4
             },
             suggestedMin: 0,
             suggestedMax: 22
@@ -234,6 +237,22 @@ class ChartsBoard {
       this.charts.altitude.options.scales.y.suggestedMax = Math.round(state.altitude * 1.1);
     }
 
+    // Update live digital value badges on chart headers
+    const altEl = document.getElementById('chart-val-alt');
+    if (altEl && typeof state.altitude === 'number') altEl.textContent = `${state.altitude.toFixed(1)} m`;
+
+    const pressEl = document.getElementById('chart-val-pressure');
+    if (pressEl && typeof state.pressure === 'number') pressEl.textContent = `${state.pressure.toFixed(1)} hPa`;
+
+    const tempEl = document.getElementById('chart-val-temp');
+    if (tempEl && typeof state.temperature === 'number') tempEl.textContent = `${state.temperature.toFixed(1)} °C`;
+
+    const voltEl = document.getElementById('chart-val-voltage');
+    if (voltEl && typeof state.voltage === 'number') voltEl.textContent = `${state.voltage.toFixed(2)}V`;
+
+    const descEl = document.getElementById('chart-val-descent');
+    if (descEl && typeof state.descentRate === 'number') descEl.textContent = `${state.descentRate.toFixed(1)}m/s`;
+
     // Execute charts re-paint
     Object.values(this.charts).forEach(chart => chart.update('none'));
   }
@@ -247,6 +266,17 @@ class ChartsBoard {
       chart.data.datasets.forEach(dataset => dataset.data = []);
       chart.update();
     });
+
+    const altEl = document.getElementById('chart-val-alt');
+    if (altEl) altEl.textContent = '0.0 m';
+    const pressEl = document.getElementById('chart-val-pressure');
+    if (pressEl) pressEl.textContent = '1013.25 hPa';
+    const tempEl = document.getElementById('chart-val-temp');
+    if (tempEl) tempEl.textContent = '25.0 °C';
+    const voltEl = document.getElementById('chart-val-voltage');
+    if (voltEl) voltEl.textContent = '4.20V';
+    const descEl = document.getElementById('chart-val-descent');
+    if (descEl) descEl.textContent = '0.0m/s';
   }
 
   /**
